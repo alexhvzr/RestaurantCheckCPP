@@ -1,31 +1,334 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project9", "Project9\Project9.vcxproj", "{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Debug|x64.ActiveCfg = Debug|x64
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Debug|x64.Build.0 = Debug|x64
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Debug|x86.ActiveCfg = Debug|Win32
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Debug|x86.Build.0 = Debug|Win32
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Release|x64.ActiveCfg = Release|x64
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Release|x64.Build.0 = Release|x64
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Release|x86.ActiveCfg = Release|Win32
-		{E27E7ADB-116A-4688-8ED3-78C1E6D193FF}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F6C956AC-2812-49A9-A9AD-477748863570}
-	EndGlobalSection
-EndGlobal
+/******************************************************************************
+* 
+* 
+* Programmer: Alex van Zuiden-Rylander
+*
+*
+*
+* Revision     Date                        Release Comment
+* --------  ----------  ------------------------------------------------------
+*   1.0     02/25/2018 Initial Release
+******************************************************************************
+*/
+// External Definition Files
+// 1. C++ Library files
+
+// This is the .cpp file
+#include <iostream>  // Defines objects and classes used for stream I/O
+#include <string>
+#include <cctype>
+#include <windows.h>
+#include "RestaurantCheck.h"
+#include <math.h>
+// Namespaces utilized in this program
+using namespace std; // Announces to the compiler that members of the namespace
+					 // "std" are utilized in this program
+
+
+
+int main()
+{
+	// Constant "const" Value Declarations
+	const int NO_ERRORS = 0;  // Program Execution status: No errors
+
+	//HANDLE screen = GetStdHandle(STD_OUTPUT_HANDLE);	  // Initialized Variable Declarations
+	int programStatus = NO_ERRORS;  // Assume no program errors
+	RestaurantCheck R;
+
+	R.placeOrder();
+	R.issueCheck();
+	
+	cin.ignore(cin.rdbuf()->in_avail());
+	cout << "\nPress only the 'Enter' key to exit program: ";
+	cin.get();
+
+	return programStatus;
+
+}	// End Method: main()
+
+
+// This is the .h class for all the variables used
+#include <iostream>  
+#include <string>
+#include <windows.h>
+#include "stdafx.h"
+#include <cctype>
+#include <map>
+using std::string;
+class RestaurantCheck
+{
+public:
+	struct MyStruct
+	{
+		double tip, tax;
+	};
+	HANDLE screen;
+	void placeOrder();
+	void displayTaxAndTip(HANDLE);
+	void issueCheck();
+	double getTip();
+	double getTax();
+	int orderSelection[5];
+	void setTip(double);
+	void setTax(double);
+	static bool testTipRate(double);
+	static bool testTaxRate(double);
+	RestaurantCheck(double, double);
+	void getUserInput(HANDLE screen, MyStruct &input);
+	double tip;
+	double tax;
+	double billTip, billTax;
+	static const double MIN_TAX_RATE;
+	static const double MAX_TAX_RATE;
+	static const double MIN_TIP_RATE;
+	static const double MAX_TIP_RATE;
+	RestaurantCheck();
+	~RestaurantCheck();
+private:
+	double billInitial;
+	static const double MIN_TIP;
+	static const double MIN_TAX;
+	void placeCursor(HANDLE, int, int);
+	const string menuItem[10] = {"Pancakes", "Pizza" , "Hamburger", "Sushi", "Ribs", "Ice Cream", "Mac & Cheese" ,"French Toast" ,"Salad" ,"Soup" };
+	const double itemCost[10] = {6.99, 14.03, 15.01, 12.90, 20.99, 4.99, 9.89, 8.50, 5.06, 4.09};
+	void presentMenu();
+	void calculateTax();
+	void calculateTip();
+
+	bool confirmOrder(char answer);
+	
+};
+
+
+// this is the second .cpp file to run the main
+#include "RestaurantCheck.h"
+#include <iostream>  
+#include <string>
+#include "stdafx.h"
+#include <cctype>
+#include <iomanip>
+#include <windows.h>
+#include <stdlib.h>
+using namespace std;
+const double RestaurantCheck::MIN_TIP = .15;
+const double RestaurantCheck::MIN_TAX = .065;
+const double RestaurantCheck::MIN_TIP_RATE = 5;
+const double RestaurantCheck::MAX_TIP_RATE = 20;
+const double RestaurantCheck::MIN_TAX_RATE = 1;
+const double RestaurantCheck::MAX_TAX_RATE = 12;
+void RestaurantCheck::placeOrder()
+{
+	system("CLS");
+	presentMenu();
+
+}
+
+void RestaurantCheck::displayTaxAndTip(HANDLE screen)
+{
+	cout << "Enter the tip rate, as a %: " << endl;
+
+	cout << "Enter the tax rate, as a %: " << endl;
+}
+
+void RestaurantCheck::issueCheck()
+{
+	system("CLS");
+	cout << "               Alex's Diner" << endl;
+	cout << "                  Check" << endl;
+	for (int i = 0; i < 5; i++) {
+		if (orderSelection[i] != 0) {
+			cout << left << setw(12) << menuItem[orderSelection[i]-1] <<  " $" << itemCost[orderSelection[i]-1] << endl;
+		}
+	}
+	cout << left << setw(20);
+	cout << right << setw(15) << "Sub Total   $" <<  billInitial << "\n";
+	calculateTax();
+	calculateTip();
+	
+	cout <<  "Tax ( " << tax * 100 <<  "%)" << right << setw(5) << " $" << billTax << "\n";
+	cout <<  "Tip ( " << tip * 100 << "%)" << right << setw(5) << " $" << billTip << "\n";
+	cout <<  "Total Due" << right << setw(5) << " $" << billInitial + billTax + billTip << "\n";
+
+}
+
+double RestaurantCheck::getTip()
+{
+	return tip;
+}
+
+double RestaurantCheck::getTax()
+{
+	return tax;
+}
+
+void RestaurantCheck::setTip(double enteredValue)
+{
+	tip = enteredValue * .01;
+}
+
+void RestaurantCheck::setTax(double  enteredValue)
+{
+	tax = enteredValue * .01;
+}
+
+
+bool RestaurantCheck::testTipRate(double enteredTip)
+{
+	
+	if (enteredTip >= MIN_TIP_RATE && enteredTip <= MAX_TIP_RATE) {
+		return true;
+	}
+	
+
+	return false;
+}
+bool RestaurantCheck::testTaxRate(double enteredTax)
+{
+	
+	if (enteredTax >= MIN_TAX_RATE && enteredTax <= MAX_TAX_RATE) {
+		return true;
+	}
+	
+	return false;
+}
+
+RestaurantCheck::RestaurantCheck() 
+{
+	MyStruct input;
+	HANDLE screen = GetStdHandle(STD_OUTPUT_HANDLE);
+	displayTaxAndTip(screen);
+	getUserInput(screen, input);
+	
+}
+RestaurantCheck::RestaurantCheck(double taxEntered, double tipEntered)
+{
+	tax = MIN_TAX;
+	tip = MIN_TIP;
+	if (testTipRate(tipEntered) == 1) {
+		setTip(tipEntered);
+	}
+	if (testTipRate(taxEntered) == 1) {
+		setTax(taxEntered);
+	}
+}
+void RestaurantCheck::getUserInput(HANDLE screen, MyStruct &input) {
+	placeCursor(screen, 0, 27);
+	cin >> input.tip;
+	if (testTipRate(input.tip) == 1) {
+		setTip(input.tip);
+	}
+	else {
+		tip = MIN_TIP;
+	}
+	placeCursor(screen, 1, 27);
+	cin >> input.tax;
+	if (testTaxRate(input.tax) == 1) {
+		setTax(input.tax);
+	}
+	else {
+		tax = MIN_TAX;
+	}
+}
+
+RestaurantCheck::~RestaurantCheck()
+{
+	tax = MIN_TAX;
+	tip = MIN_TIP;
+
+}
+
+void RestaurantCheck::placeCursor(HANDLE screen, int row , int col)
+{
+	COORD position;
+	position.Y = row;
+	position.X = col;
+	SetConsoleCursorPosition(screen, position);
+
+
+}
+
+void RestaurantCheck::presentMenu()
+{
+	cout << fixed;
+	cout << setprecision(2);
+	cout << "          Alex's Diner\n";
+	cout << "              Menu\n";
+	
+	for (int i = 0; i < 10; i++) 
+	{
+
+		cout << left << i + 1 << ". " << setw(15) << menuItem[i] <<  " $" << right <<  itemCost[i] << setw(15) << i + 2 << ". " <<  menuItem[i + 1] << right << setw(10) << " $" << itemCost[i + 1] << "\n";
+		i++;
+	}
+	cout << "11: Order Complete\n" << endl;
+	
+	
+	cout << "Enter up to 5 orders!" << endl;
+	
+	int orderNumber;
+	int j = 0;
+		while(j < 5)
+		{
+			cout << "Enter Order item #" << j + 1 << endl;
+			cin >> orderNumber;
+			if (orderNumber > 10 ) 
+			{
+				cout << "You have elected NOT to enter an Order!" << endl;
+				j = 5;
+			}
+			else 
+			{
+				orderSelection[j] = orderNumber;
+				j++;
+			}
+		}
+		bool test = false;
+		system("CLS");
+		while (test == 0)
+		{
+			
+			char answer;
+			cout << "Confirming your Order: " << endl;
+			for (int i = 0; i < 5; i++) {
+				if (orderSelection[i] != 0 && orderSelection[i] <=10) {
+					cout << "Item " << i + 1 << ":\n" << menuItem[orderSelection[i]-1] << ", Price: $ " << itemCost[orderSelection[i]-1] << endl;
+					billInitial += itemCost[orderSelection[i]-1];
+				}
+			}
+			cout << "Is this right?  (Y/N)" << endl;
+			cin >> answer;
+			if (confirmOrder(answer) == 1) {
+				test = true;
+			}
+			else 
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					orderSelection[i] = 0;
+
+
+				}
+				system("CLS");
+				presentMenu();
+			}
+			
+		}
+		
+}
+
+void RestaurantCheck::calculateTax()
+{
+	billTax = billInitial * tax;
+}
+
+void RestaurantCheck::calculateTip()
+{
+	billTip = billInitial * tip;
+}
+bool RestaurantCheck::confirmOrder(char answer) {
+	if (tolower(answer) == 'y') {
+		return true;
+	}
+
+	return false;
+}
